@@ -1,0 +1,271 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="alphabet\0.mask.png" />
+    <None Remove="alphabet\0.png" />
+    <None Remove="alphabet\1.mask.png" />
+    <None Remove="alphabet\1.png" />
+    <None Remove="alphabet\2.mask.png" />
+    <None Remove="alphabet\2.png" />
+    <None Remove="alphabet\3.mask.png" />
+    <None Remove="alphabet\3.png" />
+    <None Remove="alphabet\4.mask.png" />
+    <None Remove="alphabet\4.png" />
+    <None Remove="alphabet\5.mask.png" />
+    <None Remove="alphabet\5.png" />
+    <None Remove="alphabet\6.mask.png" />
+    <None Remove="alphabet\6.png" />
+    <None Remove="alphabet\7.mask.png" />
+    <None Remove="alphabet\7.png" />
+    <None Remove="alphabet\8.mask.png" />
+    <None Remove="alphabet\8.png" />
+    <None Remove="alphabet\9.mask.png" />
+    <None Remove="alphabet\9.png" />
+    <None Remove="alphabet\A.png" />
+    <None Remove="alphabet\B.png" />
+    <None Remove="alphabet\colon.png" />
+    <None Remove="alphabet\critically.mask.png" />
+    <None Remove="alphabet\critically.png" />
+    <None Remove="alphabet\for.png" />
+    <None Remove="alphabet\hit.mask.png" />
+    <None Remove="alphabet\hit.png" />
+    <None Remove="alphabet\lower-a.png" />
+    <None Remove="alphabet\lower-d.png" />
+    <None Remove="alphabet\lower-e.png" />
+    <None Remove="alphabet\lower-f.png" />
+    <None Remove="alphabet\lower-i.png" />
+    <None Remove="alphabet\lower-l.png" />
+    <None Remove="alphabet\lower-n.png" />
+    <None Remove="alphabet\lower-s.png" />
+    <None Remove="alphabet\lower-t.png" />
+    <None Remove="alphabet\M.mask.png" />
+    <None Remove="alphabet\M.png" />
+    <None Remove="alphabet\o.png" />
+    <None Remove="alphabet\r.png" />
+    <None Remove="alphabet\t.png" />
+    <None Remove="alphabet\u.png" />
+    <None Remove="alphabet\using.mask.png" />
+    <None Remove="alphabet\using.png" />
+    <None Remove="alphabet\Y.png" />
+    <None Remove="alphabet\You.mask.png" />
+    <None Remove="alphabet\You.png" />
+    <None Remove="alphabet\[.png" />
+    <None Remove="alphabet\].png" />
+    <None Remove="markers\ChatBottomLeft.png" />
+    <None Remove="markers\ChatUpperRight.png" />
+    <None Remove="sample\Capture.PNG" />
+    <None Remove="sample\Capture2.PNG" />
+    <None Remove="sample\Capture3.PNG" />
+    <None Remove="sample\Capture4.PNG" />
+    <None Remove="sample\Capture5.PNG" />
+    <None Remove="sample\Capture6.PNG" />
+    <None Remove="sample\Capture7.PNG" />
+    <None Remove="sample\Uneven1.PNG" />
+    <None Remove="sample\Uneven2.PNG" />
+    <None Remove="sample\Untitled.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="alphabet\0.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\1.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\2.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\3.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\4.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\5.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\5.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\6.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\6.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\7.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\7.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\8.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\8.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\9.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\9.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\A.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\B.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\colon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\critically.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\critically.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\for.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\hit.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\hit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-a.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-d.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-e.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-f.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-i.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-l.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-n.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-s.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\lower-t.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\M.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\M.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\o.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\r.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\t.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\u.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\using.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\using.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\Y.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\You.mask.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\You.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\[.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\].png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="markers\ChatBottomLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="markers\ChatUpperRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture2.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture3.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture4.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture5.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture6.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Capture7.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Uneven1.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Uneven2.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sample\Untitled.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="Tesseract" Version="4.1.1" />
+  </ItemGroup>
+
+</Project>
