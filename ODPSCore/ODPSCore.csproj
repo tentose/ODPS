@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -61,16 +60,6 @@
     <None Remove="alphabet\].png" />
     <None Remove="markers\ChatBottomLeft.png" />
     <None Remove="markers\ChatUpperRight.png" />
-    <None Remove="sample\Capture.PNG" />
-    <None Remove="sample\Capture2.PNG" />
-    <None Remove="sample\Capture3.PNG" />
-    <None Remove="sample\Capture4.PNG" />
-    <None Remove="sample\Capture5.PNG" />
-    <None Remove="sample\Capture6.PNG" />
-    <None Remove="sample\Capture7.PNG" />
-    <None Remove="sample\Uneven1.PNG" />
-    <None Remove="sample\Uneven2.PNG" />
-    <None Remove="sample\Untitled.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -233,44 +222,11 @@
     <Content Include="markers\ChatUpperRight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sample\Capture.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture2.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture3.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture4.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture5.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture6.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Capture7.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Uneven1.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Uneven2.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample\Untitled.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
-    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.5.20211231" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageReference Include="Tesseract" Version="4.1.1" />
   </ItemGroup>
 
 </Project>

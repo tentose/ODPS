@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenCvSharp;
 
-namespace ODPS
+namespace ODPSCore
 {
     public enum ChatLineType
     {
@@ -16,7 +16,7 @@ namespace ODPS
 
     public record ChatLineContent(ChatLineType Type, int Value);
 
-    internal class ChatLineProcessor
+    public class ChatLineProcessor
     {
         private const double TEMPLATE_MATCH_THREASHOLD = 0.05;
 

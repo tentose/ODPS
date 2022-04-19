@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenCvSharp;
 
-namespace ODPS
+namespace ODPSCore
 {
     internal class TestCv
     {

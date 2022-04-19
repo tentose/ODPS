@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using OpenCvSharp;
 
-namespace ODPS
+namespace ODPSCore
 {
-    internal class ODPS
+    public enum DamageType
+    {
+        Unknown,
+        Hit,
+        Crit,
+    };
+
+    public record DamageInfo(DamageType Type, int Value);
+
+    public record DpsInfo(int total, TimeSpan duration);
+
+    public class ODPS
     {
         ScreenCapture capture = new ScreenCapture();
         ChatLineProcessor processor = new ChatLineProcessor();
@@ -40,6 +50,7 @@ namespace ODPS
         private TimeSpan ClearDamageTimeout = TimeSpan.FromSeconds(10);
         private TimeSpan DamageWindow = TimeSpan.FromSeconds(30);
         private List<(int damage, DateTime time)> damageDealt = new List<(int damage, DateTime time)>();
+        private List<ChatLineContent> lastChatContent = new List<ChatLineContent>();
 
         enum MarkerSearchStrategy
         {
@@ -54,9 +65,8 @@ namespace ODPS
             {
                 if (!markerImages.ContainsKey(kv.Key))
                 {
-                    var tmp = Cv2.ImRead(GetPathForMarker(kv.Key));
-                    Mat markerGray = new Mat();
-                    Cv2.CvtColor(tmp, markerGray, ColorConversionCodes.BGR2GRAY);
+                    var tmp = new Mat(GetPathForMarker(kv.Key));
+                    Mat markerGray = tmp.CvtColor(ColorConversionCodes.BGR2GRAY);
                     markerImages[kv.Key] = markerGray;
                 }
             }
@@ -65,7 +75,14 @@ namespace ODPS
             dpsCalcTimer = new Timer(DpsCalcTimerTick, null, 1000, 1000);
         }
 
-        private List<ChatLineContent> lastChatContent = new List<ChatLineContent>();
+        public event EventHandler<DamageInfo> DamageDetected;
+        private void OnDamageDetected(DamageInfo info) => DamageDetected?.Invoke(this, info);
+
+        public event EventHandler<DpsInfo> DpsChanged;
+        private void OnDpsChanged(DpsInfo info) => DpsChanged?.Invoke(this, info);
+
+        public event EventHandler<bool> CombatChanged;
+        private void OnCombatChanged(bool inCombat) => CombatChanged?.Invoke(this, inCombat);
 
         public void DpsCalcTimerTick(Object? stateInfo)
         {
@@ -87,6 +104,7 @@ namespace ODPS
             if (damageDealt.Count > 0 && damageDealt[damageDealt.Count - 1].time + ClearDamageTimeout < now)
             {
                 damageDealt.Clear();
+                OnCombatChanged(false);
             }
             else if (oldDamageIndex >= 0)
             {
@@ -96,8 +114,9 @@ namespace ODPS
             if (damageDealt.Count > 0)
             {
                 TimeSpan damageDuration = now - damageDealt[0].time;
-                var seconds = damageDuration.TotalSeconds;
-                Console.WriteLine($"{totalDamage / seconds}: {totalDamage} over {seconds} seconds");
+                //var seconds = damageDuration.TotalSeconds;
+                OnDpsChanged(new DpsInfo(totalDamage, damageDuration));
+                //Console.WriteLine($"{totalDamage / seconds}: {totalDamage} over {seconds} seconds");
             }
         }
 
@@ -139,24 +158,34 @@ namespace ODPS
                     int indexOfFirstNewItem = result.Count - newEntryCount;
                     for (int i = indexOfFirstNewItem; i < result.Count; i++)
                     {
+                        if (damageDealt.Count == 0)
+                        {
+                            OnCombatChanged(true);
+                        }
                         damageDealt.Add((result[i].Value, DateTime.Now));
-                        Console.WriteLine($"{result[i].Type}: {result[i].Value}");
+
+                        if (result[i].Type != ChatLineType.Unknown)
+                        {
+                            OnDamageDetected(new DamageInfo(ChatTypeToDamageType(result[i].Type), result[i].Value));
+                        }
+                        
+                        //Console.WriteLine($"{result[i].Type}: {result[i].Value}");
                     }
 
                     if (indexOfFirstNewItem < 2)
                     {
-                        Console.WriteLine($"Large rewrite. indexOfFirstNewItem:{indexOfFirstNewItem}");
-                        Console.WriteLine("New-----------------------------------");
+                        //Console.WriteLine($"Large rewrite. indexOfFirstNewItem:{indexOfFirstNewItem}");
+                        //Console.WriteLine("New-----------------------------------");
                         for (int i = 0; i < result.Count; i++)
                         {
                             Console.WriteLine($"{result[i].Type}: {result[i].Value}");
                         }
-                        Console.WriteLine("Old-----------------------------------");
+                        //Console.WriteLine("Old-----------------------------------");
                         for (int i = 0; i < lastChatContent.Count; i++)
                         {
                             Console.WriteLine($"{lastChatContent[i].Type}: {lastChatContent[i].Value}");
                         }
-                        Console.WriteLine("End-----------------------------------");
+                        //Console.WriteLine("End-----------------------------------");
                     }
 
                     lastChatContent = result;
@@ -167,6 +196,16 @@ namespace ODPS
                 }
             }
             //CvInvoke.WaitKey(50);
+        }
+
+        private DamageType ChatTypeToDamageType(ChatLineType type)
+        {
+            switch (type)
+            {
+                case ChatLineType.Hit: return DamageType.Hit;
+                case ChatLineType.CriticalHit: return DamageType.Crit;
+                default: return DamageType.Unknown;
+            }
         }
 
         private int TryMatchChatContent(List<ChatLineContent> oldContent, List<ChatLineContent> newContent)
@@ -234,7 +273,7 @@ namespace ODPS
             Point? markerPosition = null;
             var markerImg = markerImages[markerType];
 
-            Mat output = img.CvtColor(ColorConversionCodes.BGR2GRAY);
+            //Mat output = img.CvtColor(ColorConversionCodes.BGR2GRAY);
 
             Mat searchImg = null;
             if (searchStrategy == MarkerSearchStrategy.ToGray)
@@ -261,11 +300,11 @@ namespace ODPS
 
             Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
 
-            int x = minLoc.X;
-            int y = minLoc.Y;
-            int w = markerImg.Width;
-            int h = markerImg.Height;
-            Rect exclaimRect = new Rect(x, y, w, h);
+            //int x = minLoc.X;
+            //int y = minLoc.Y;
+            //int w = markerImg.Width;
+            //int h = markerImg.Height;
+            //Rect exclaimRect = new Rect(x, y, w, h);
 
             if (minVal < confidenceThreshold)
             {
