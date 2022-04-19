@@ -33,6 +33,7 @@
     <None Remove="alphabet\colon.png" />
     <None Remove="alphabet\critically.mask.png" />
     <None Remove="alphabet\critically.png" />
+    <None Remove="alphabet\for.mask.png" />
     <None Remove="alphabet\for.png" />
     <None Remove="alphabet\hit.mask.png" />
     <None Remove="alphabet\hit.png" />
@@ -146,6 +147,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="alphabet\critically.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="alphabet\for.mask.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="alphabet\for.png">
@@ -264,6 +268,7 @@
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
     <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.5.20211231" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="Tesseract" Version="4.1.1" />
   </ItemGroup>

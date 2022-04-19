@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Emgu.CV;
-using Emgu.CV.Structure;
+using OpenCvSharp;
 
 namespace ODPS
 {
@@ -33,28 +31,27 @@ namespace ODPS
         };
 
         private const string ALPHABET_PATH = @".\alphabet\";
-        Dictionary<int, (Image<Gray, byte> img, Image<Gray, byte>? mask)> Numbers = new Dictionary<int, (Image<Gray, byte>, Image<Gray, byte>?)>();
-        Dictionary<string, (Image<Gray, byte> img, Image<Gray, byte>? mask)> Keywords = new Dictionary<string, (Image<Gray, byte>, Image<Gray, byte>?)>();
+        Dictionary<int, (Mat img, Mat? mask)> Numbers = new Dictionary<int, (Mat, Mat?)>();
+        Dictionary<string, (Mat img, Mat? mask)> Keywords = new Dictionary<string, (Mat, Mat?)>();
         private void LoadAlphabet()
         {
             var files = Directory.EnumerateFiles(ALPHABET_PATH, "*.png");
             var loadSingle = (string filePath) =>
             {
                 string maskPath = filePath.Replace(".png", ".mask.png");
-                Image<Gray, byte>? mask = null;
+                Mat? mask = null;
                 if (File.Exists(maskPath))
                 {
-                    mask = new Image<Bgr, Byte>(maskPath).Convert<Gray, byte>();
+                    mask = new Mat(maskPath, ImreadModes.Grayscale);
                 }
 
-                var gray = new Image<Bgr, Byte>(filePath).Convert<Hsv, byte>().Split()[2];
+                var gray = new Mat(filePath).CvtColor(ColorConversionCodes.BGR2HSV).Split()[2];
 
                 return (gray, mask);
             };
 
             foreach (var filePath in files)
             {
-                string strval = "";
                 string fileName = Path.GetFileNameWithoutExtension(filePath);
 
                 // skip masks
@@ -85,33 +82,34 @@ namespace ODPS
             LoadAlphabet();
         }
 
-        public List<ChatLineContent> ProcessChatScreen(Image<Bgr, byte> img)
+        public List<ChatLineContent> ProcessChatScreen(Mat img)
         {
             List<ChatLineContent> resultLines = new List<ChatLineContent>();
-            var gray = img.Convert<Hsv, byte>().Split()[2];
+            var gray = img.CvtColor(ColorConversionCodes.BGR2HSV).Split()[2];
 
-            Rectangle rect = new Rectangle();
-            Mat outputMask = Mat.Zeros(gray.Height + 2, gray.Width + 2, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
-            CvInvoke.FloodFill(gray, outputMask, new Point(0, 0), new MCvScalar(0), out rect, new MCvScalar(20), new MCvScalar(20), Emgu.CV.CvEnum.Connectivity.EightConnected);
+            Mat outputMask = Mat.Zeros(gray.Height + 2, gray.Width + 2, MatType.CV_8UC1);
+            Cv2.FloodFill(gray, new Point(0, 0), new Scalar(0), out Rect rect, new Scalar(20), new Scalar(20), FloodFillFlags.Link8);
 
-            Matrix<byte> row = new Matrix<byte>(img.Rows, 1);
-            gray.Reduce<byte>(row, Emgu.CV.CvEnum.ReduceDimension.SingleCol, Emgu.CV.CvEnum.ReduceType.ReduceMax);
+            Mat row = gray.Reduce(ReduceDimension.Column, ReduceTypes.Max, -1);           
 
             var output = gray;
 
             //Matrix<byte> rowFiltered = new Matrix<byte>(img.Rows, 1);
             //CvInvoke.Threshold(row, rowFiltered, 90, 255, Emgu.CV.CvEnum.ThresholdType.BinaryInv);
 
+            //Cv2.ImShow("output", output);
+            //Cv2.WaitKey();
+
             int lastPicBottom = 0;
             for (int i = 0; i < row.Rows; i++)
             {
                 var height = i - lastPicBottom;
-                if (row[i, 0] < 110)
+                if (row.At<byte>(i, 0) < 110)
                 {
                     if (height > 15)
                     {
-                        var line = gray.GetSubRect(new Rectangle(0, lastPicBottom, img.Width, height));
-                        output.Draw(new LineSegment2D(new Point(0, i), new Point(img.Width, i)), new Gray(255), 1);
+                        var line = gray[new Rect(0, lastPicBottom, img.Width, height)];
+                        output.Line(new Point(0, i), new Point(img.Width, i), new Scalar(255), 1);
 
                         resultLines.Add(ProcessChatLine(line));
                     }
@@ -122,24 +120,24 @@ namespace ODPS
             //CvInvoke.Imshow("input", output);
             //CvInvoke.WaitKey(50);
 
+            
+
             return resultLines;
         }
 
-        private Point? FindTemplate(Image<Gray, byte> img, Image<Gray, byte> template, Image<Gray, byte>? mask)
+        private Point? FindTemplate(Mat img, Mat template, Mat? mask)
         {
             Mat result = new Mat();
             if (mask == null)
             {
-                CvInvoke.MatchTemplate(img, template, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+                Cv2.MatchTemplate(img, template, result, TemplateMatchModes.SqDiffNormed);
             }
             else
             {
-                CvInvoke.MatchTemplate(img, template, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed, mask);
+                Cv2.MatchTemplate(img, template, result, TemplateMatchModes.SqDiffNormed, mask);
             }
 
-            double minVal = 0, maxVal = 0;
-            Point minLoc = new Point(), maxLoc = new Point();
-            CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+            Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
 
             if (minVal < TEMPLATE_MATCH_THREASHOLD)
             {
@@ -149,26 +147,24 @@ namespace ODPS
             return null;
         }
 
-        private List<Point> FindTemplates(Image<Gray, byte> img, Image<Gray, byte> template, Image<Gray, byte>? mask)
+        private List<Point> FindTemplates(Mat img, Mat template, Mat? mask)
         {
             List<Point> matches = new List<Point>();
 
             Mat result = new Mat();
             if (mask == null)
             {
-                CvInvoke.MatchTemplate(img, template, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+                Cv2.MatchTemplate(img, template, result, TemplateMatchModes.SqDiffNormed);
             }
             else
             {
-                CvInvoke.MatchTemplate(img, template, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed, mask);
+                Cv2.MatchTemplate(img, template, result, TemplateMatchModes.SqDiffNormed, mask);
             }
 
-            var minmaxMask = Mat.Ones(result.Rows, result.Cols, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            var minmaxMask = Mat.Ones(result.Rows, result.Cols, MatType.CV_8UC1);
             while (true)
             {
-                double minVal = 0, maxVal = 0;
-                Point minLoc = new Point(), maxLoc = new Point();
-                CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc, minmaxMask);
+                Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc, minmaxMask);
 
                 if (minVal < TEMPLATE_MATCH_THREASHOLD)
                 {
@@ -176,9 +172,9 @@ namespace ODPS
                     int y = minLoc.Y;
                     int w = template.Width;
                     int h = template.Height;
-                    Rectangle rect = new Rectangle(x, y, w, h);
+                    Rect rect = new Rect(x, y, w, h);
 
-                    CvInvoke.Rectangle(minmaxMask, rect, new MCvScalar(0), -1);
+                    Cv2.Rectangle(minmaxMask, rect, new Scalar(0), -1);
 
                     matches.Add(new Point(x, y));
                 }
@@ -191,12 +187,12 @@ namespace ODPS
             return matches;
         }
 
-        private Image<Gray, byte> GetSubRect(Image<Gray, byte> img, int start, int end)
+        private Mat GetSubRect(Mat img, int start, int end)
         {
-            return img.GetSubRect(new Rectangle(start, 0, end - start, img.Height));
+            return img[new Rect(start, 0, end - start, img.Height)];
         }
 
-        public ChatLineContent ProcessChatLine(Image<Gray, byte> img)
+        public ChatLineContent ProcessChatLine(Mat img)
         {
             List<(int x, string s)> matches = new List<(int x, string s)>();
 

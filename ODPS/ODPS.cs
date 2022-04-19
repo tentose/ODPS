@@ -1,11 +1,11 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+//using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using OpenCvSharp;
 
 namespace ODPS
 {
@@ -16,7 +16,7 @@ namespace ODPS
         Timer mainTimer;
         Timer dpsCalcTimer;
         Size windowSize = new Size(2560, 1440);
-        Rectangle windowRoi = new Rectangle(0, 0, 2560, 1440);
+        Rect windowRoi = new Rect(0, 0, 2560, 1440);
 
         enum MarkerType
         {
@@ -35,7 +35,7 @@ namespace ODPS
         {
             return markerFileParentPath + markerFilePaths[type];
         }
-        Dictionary<MarkerType, Image<Gray, byte>> markerImages = new Dictionary<MarkerType, Image<Gray, byte>>();
+        Dictionary<MarkerType, Mat> markerImages = new Dictionary<MarkerType, Mat>();
 
         private TimeSpan ClearDamageTimeout = TimeSpan.FromSeconds(10);
         private TimeSpan DamageWindow = TimeSpan.FromSeconds(30);
@@ -54,8 +54,9 @@ namespace ODPS
             {
                 if (!markerImages.ContainsKey(kv.Key))
                 {
-                    var tmp = new Image<Bgr, Byte>(GetPathForMarker(kv.Key));
-                    var markerGray = tmp.Convert<Gray, byte>();
+                    var tmp = Cv2.ImRead(GetPathForMarker(kv.Key));
+                    Mat markerGray = new Mat();
+                    Cv2.CvtColor(tmp, markerGray, ColorConversionCodes.BGR2GRAY);
                     markerImages[kv.Key] = markerGray;
                 }
             }
@@ -105,11 +106,11 @@ namespace ODPS
             var bmp = capture.Capture(windowSize, windowRoi);
             if (bmp != null)
             {
-                var bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
                 try
                 {
-                    var original = new Image<Bgr, byte>(bits.Width, bits.Height, bits.Stride, bits.Scan0);
+                    var original = new Mat(bits.Height, bits.Width, MatType.CV_8UC3, bits.Scan0, bits.Stride);
 
                     if (original.Width == windowSize.Width && original.Height == windowSize.Height)
                     {
@@ -127,7 +128,7 @@ namespace ODPS
                         var top = topRightMarkerPos.Value.Y + 30;
                         var bottom = bottomLeftMarkerPos.Value.Y - 5;
                         var right = topRightMarkerPos.Value.X + markerImages[MarkerType.ChatUpperRight].Width;
-                        windowRoi = new Rectangle(left, top, right - left, bottom - top);
+                        windowRoi = new Rect(left, top, right - left, bottom - top);
 
                         return;
                     }
@@ -228,18 +229,17 @@ namespace ODPS
             return newEntries;
         }
 
-        private Point? LookForMarker(Image<Bgr, byte> img, MarkerType markerType, MarkerType mask, MarkerSearchStrategy searchStrategy, double confidenceThreshold = 0.3)
+        private Point? LookForMarker(Mat img, MarkerType markerType, MarkerType mask, MarkerSearchStrategy searchStrategy, double confidenceThreshold = 0.3)
         {
             Point? markerPosition = null;
             var markerImg = markerImages[markerType];
 
-            Image<Gray, byte> output = img.Convert<Gray, byte>();
-            Gray boxColor = new Gray(255);
+            Mat output = img.CvtColor(ColorConversionCodes.BGR2GRAY);
 
-            Image<Gray, byte> searchImg = null;
+            Mat searchImg = null;
             if (searchStrategy == MarkerSearchStrategy.ToGray)
             {
-                searchImg = img.Convert<Gray, byte>();
+                searchImg = img.CvtColor(ColorConversionCodes.BGR2GRAY);
             }
             else if (searchStrategy == MarkerSearchStrategy.RedChannel)
             {
@@ -252,24 +252,24 @@ namespace ODPS
             Mat result = new Mat();
             if (mask == MarkerType.None)
             {
-                CvInvoke.MatchTemplate(searchImg, markerImg, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+                Cv2.MatchTemplate(searchImg, markerImg, result, TemplateMatchModes.SqDiffNormed);
             }
             else
             {
-                CvInvoke.MatchTemplate(searchImg, markerImg, result, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed, markerImages[mask]);
+                Cv2.MatchTemplate(searchImg, markerImg, result, TemplateMatchModes.SqDiffNormed, markerImages[mask]);
             }
 
-            result.MinMax(out double[] minVal, out double[] maxVal, out Point[] minLoc, out Point[] maxLoc);
+            Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
 
-            int x = minLoc[0].X;
-            int y = minLoc[0].Y;
+            int x = minLoc.X;
+            int y = minLoc.Y;
             int w = markerImg.Width;
             int h = markerImg.Height;
-            Rectangle exclaimRect = new Rectangle(x, y, w, h);
+            Rect exclaimRect = new Rect(x, y, w, h);
 
-            if (minVal[0] < confidenceThreshold)
+            if (minVal < confidenceThreshold)
             {
-                markerPosition = minLoc[0];
+                markerPosition = minLoc;
             }
 
             return markerPosition;

@@ -63,6 +63,13 @@ public class ScreenCapture
         return result;
     }
 
+    public Bitmap? Capture(OpenCvSharp.Size sizeRequirement, OpenCvSharp.Rect roi)
+    {
+        Size drawingSizeRequirement = new Size(sizeRequirement.Width, sizeRequirement.Height);
+        Rectangle drawingRoi = new Rectangle(roi.X, roi.Y, roi.Width, roi.Height);
+        return Capture(drawingSizeRequirement, drawingRoi);
+    }
+
     public Rectangle GetForegroundWindowRect()
     {
         var foregroundWindowsHandle = GetForegroundWindow();
@@ -70,5 +77,11 @@ public class ScreenCapture
         GetWindowRect(foregroundWindowsHandle, ref rect);
 
         return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+    }
+
+    public OpenCvSharp.Rect GetForegroundWindowRectCv()
+    {
+        var drawingRect = GetForegroundWindowRect();
+        return new OpenCvSharp.Rect(drawingRect.X, drawingRect.Y, drawingRect.Width, drawingRect.Height);
     }
 }

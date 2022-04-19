@@ -332,22 +332,22 @@ public partial class MainClass
         stopwatch.Start();
         for (int i = 0; i < 0; i++)
         {
-            var res = processor.ProcessChatScreen(img);
+            //var res = processor.ProcessChatScreen(img);
         }
         Console.WriteLine(stopwatch.ElapsedMilliseconds);
         stopwatch.Stop();
 
-        var result = processor.ProcessChatScreen(img);
-        foreach (var line in result)
-        {
-            Console.WriteLine($"{line.Type}: {line.Value}");
-        }
+        //var result = processor.ProcessChatScreen(img);
+        //foreach (var line in result)
+        //{
+        //    Console.WriteLine($"{line.Type}: {line.Value}");
+        //}
 
 
-        SplitImageIntoLines(@".\sample\Uneven1.png");
+        //SplitImageIntoLines(@".\sample\Uneven1.png");
 
-        CvInvoke.WaitKey(0);
-        //Console.ReadLine();
+        //CvInvoke.WaitKey(0);
+        Console.ReadLine();
     }
 
     public static void Main()
@@ -355,9 +355,12 @@ public partial class MainClass
         //MainClass cls = new MainClass();
         //cls.Exec();
 
-        ODPS.ODPS dps = new ODPS.ODPS();
+        TestCv cls = new TestCv();
+        cls.Exec();
 
-        Console.ReadLine();
+        //ODPS.ODPS dps = new ODPS.ODPS();
+
+        //Console.ReadLine();
     }
 
 }
